@@ -44,7 +44,7 @@ class UsersController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->errors()
+                'message' => $validator->errors()->all()
             ]);
         }
 
@@ -98,7 +98,7 @@ class UsersController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->errors()
+                'message' => $validator->errors()->all()
             ]);
         }
 
@@ -128,11 +128,18 @@ class UsersController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
-        $user->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'User deleted successfully',
-            'data' => $user
-        ]);
+        $delete = $user->delete();
+        if ($delete) {
+            return response()->json([
+                'status' => true,
+                'message' => 'User deleted successfully',
+                'data' => $user
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'message' => 'User not deleted'
+            ]);
+        }
     }
 }

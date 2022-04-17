@@ -37,7 +37,7 @@ class PricesController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->errors()
+                'message' => $validator->errors()->all()
             ]);
         }
 
@@ -85,7 +85,7 @@ class PricesController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->errors()
+                'message' => $validator->errors()->all()
             ]);
         }
 
@@ -112,12 +112,18 @@ class PricesController extends Controller
     public function destroy($id)
     {
         $price = Price::find($id);
-        $price->delete();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Price deleted successfully',
-            'data' => $price
-        ]);
+        $delete = $price->delete();
+        if($delete){
+            return response()->json([
+                'status' => true,
+                'message' => 'Price deleted successfully',
+                'data' => $price
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'message' => 'Price not deleted',
+            ]);
+        }
     }
 }

@@ -35,7 +35,7 @@ class RolesController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors()
+                'message' => $validator->errors()->all()
             ]);
         }
 
@@ -78,7 +78,7 @@ class RolesController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => $validator->errors()
+                'message' => $validator->errors()->all()
             ]);
         }
 
@@ -102,12 +102,18 @@ class RolesController extends Controller
     public function destroy($id)
     {
         $role = Role::find($id);
-        $role->delete();
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Role deleted successfully',
-            'data' => $role
-        ]);
+        $delete = $role->delete();
+        if($delete){
+            return response()->json([
+                'status' => true,
+                'message' => 'Role deleted successfully',
+                'data' => $role
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'message' => 'Role not deleted'
+            ]);
+        }
     }
 }

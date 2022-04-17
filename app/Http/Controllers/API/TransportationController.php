@@ -37,7 +37,7 @@ class TransportationController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->errors()
+                'message' => $validator->errors()->all()
             ]);
         }
 
@@ -84,7 +84,7 @@ class TransportationController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->errors()
+                'message' => $validator->errors()->all()
             ]);
         }
 
@@ -111,11 +111,18 @@ class TransportationController extends Controller
     public function destroy($id)
     {
         $transportation = Transportation::find($id);
-        $transportation->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'Transportation deleted successfully',
-            'data' => $transportation
-        ]);
+        $delete = $transportation->delete();
+        if ($delete) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Transportation deleted successfully',
+                'data' => $transportation
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'message' => 'Transportation not deleted',
+            ]);
+        }
     }
 }

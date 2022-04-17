@@ -45,7 +45,7 @@ class ReservationController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->errors()
+                'message' => $validator->errors()->all()
             ]);
         }
 
@@ -102,7 +102,7 @@ class ReservationController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $validator->errors()
+                'message' => $validator->errors()->all()
             ]);
         }
 
@@ -133,11 +133,18 @@ class ReservationController extends Controller
     public function destroy($id)
     {
         $reservation = Reservation::find($id);
-        $reservation->delete();
-        return response()->json([
-            'status' => true,
-            'message' => 'Reservation deleted successfully',
-            'data' => $reservation
-        ]);
+        $delete = $reservation->delete();
+        if ($delete) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Reservation deleted successfully',
+                'data' => $reservation
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Reservation not deleted'
+            ]);
+        }
     }
 }
