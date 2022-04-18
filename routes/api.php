@@ -20,10 +20,6 @@ use App\Http\Controllers\API\TransportationController;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 // Auth routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -57,8 +53,10 @@ Route::put('/prices/{id}', [PricesController::class, 'update']);
 Route::delete('/prices/{id}', [PricesController::class, 'destroy']);
 
 // Reservation routes
-Route::get('/reservations', [ReservationController::class, 'index']);
-Route::get('/reservations/{id}', [ReservationController::class, 'show']);
-Route::post('/reservations', [ReservationController::class, 'store']);
-Route::put('/reservations/{id}', [ReservationController::class, 'update']);
-Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/reservations', [ReservationController::class, 'index']);
+    Route::get('/reservations/{id}', [ReservationController::class, 'show']);
+    Route::post('/reservations', [ReservationController::class, 'store']);
+    Route::put('/reservations/{id}', [ReservationController::class, 'update']);
+    Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
+});

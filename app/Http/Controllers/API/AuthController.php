@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\User;
+use Carbon\Traits\Timestamp;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,6 +15,7 @@ class AuthController extends Controller
     public function register (Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'role' => 'nullable|string',
             'first_name' => 'required|string',
             'last_name' => 'nullable|string',
             'email' => 'required|email|unique:users',
@@ -28,7 +31,14 @@ class AuthController extends Controller
             ]);
         }
 
+        if(!$request->role){
+            $role = Role::where('name', 'user')->first();
+        } else {
+            $role = Role::where('name', $request->role)->first();
+        }
+
         $user = User::create([
+            'role_id' => $role->id,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'email' => $request->email,
@@ -37,12 +47,15 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('MyApp')->accessToken;
+        $token = $user->createToken('authToken');
 
         return response()->json([
             'status' => true,
             'message' => 'User created successfully',
-            'data' =>  $user
+            'data' => [
+                'user' => $user,
+                'token' => $token->plainTextToken
+            ]
         ]);
 
     }
@@ -77,10 +90,15 @@ class AuthController extends Controller
             ]);
         }
 
+        $token = $user->createToken('authToken');
+
         return response()->json([
             'status' => true,
             'message' => 'User logged in successfully',
-            'user' => $user
+            'data' => [
+                'user' => $user,
+                'token' => $token->plainTextToken
+            ]
         ]);
     }
 }
