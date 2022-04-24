@@ -17,7 +17,6 @@ class CreateTransportationsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('type');
-            $table->double('price');
             $table->timestamps();
         });
     }
